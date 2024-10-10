@@ -1,6 +1,5 @@
-import os
+import os, sys
 from openai import OpenAI
-import argparse, sys
 
 
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -17,7 +16,7 @@ client = OpenAI(
 
 while True:
     print("\n")
-    user_input = input("Entrer un prompt \"system\" pour orienter l'IA (ou \"quitter\" pour quitter):\n")
+    user_input = input("Entrer un prompt system pour orienter l'IA (ou \"quitter\" pour quitter):\n")
 
     if user_input.lower() == "quitter":
         print("Arrêt du programme.")
