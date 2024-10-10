@@ -1,0 +1,60 @@
+import os
+from openai import OpenAI
+import argparse, sys
+
+
+api_key = os.environ.get("OPENAI_API_KEY")
+messages = []
+model = "gpt-4o-mini"
+
+if api_key is None:
+    print("Error: OPENAI_API_KEY environment variable is not set.")
+    sys.exit(1)
+
+client = OpenAI(
+    api_key=api_key,
+)
+
+while True:
+    print("\n")
+    user_input = input("Entrer un prompt \"system\" pour orienter l'IA (ou \"quitter\" pour quitter):\n")
+
+    if user_input.lower() == "quitter":
+        print("Arrêt du programme.")
+        sys.exit(0)
+
+    messages.append(
+        {
+            "role": "system",
+            "content": user_input
+        }
+    )
+
+    print("\n")
+    user_input = input("Entrer un prompt utlisateur:\n")
+    messages.append(
+        {
+            "role": "user",
+            "content": user_input
+        }
+    )
+    stream = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        stream=True,
+    )
+    collected_messages = []
+    for chunk in stream:
+        chunk_message = chunk.choices[0].delta.content or ""
+        print(chunk_message, end="")
+        collected_messages.append(chunk_message)
+
+    messages.append(
+        {
+            "role": "system",
+            "content": "".join(collected_messages)
+        }
+    )
+
+    user_input = input()
+
